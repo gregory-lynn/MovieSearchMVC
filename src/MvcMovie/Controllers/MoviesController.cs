@@ -39,12 +39,15 @@ namespace MvcMovie.Controllers
                 movies = movies.Where(x => x.Genre == movieGenre);
             }
 
+            // change default sort order based on requirements
+            movies = movies.OrderByDescending(m => m.ReleaseDate);
+
             var movieGenreVM = new MovieGenreViewModel
             {
                 Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
                 Movies = await movies.ToListAsync()
             };
-
+            
             return View(movieGenreVM);
         }
 
