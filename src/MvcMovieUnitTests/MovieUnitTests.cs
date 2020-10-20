@@ -3,6 +3,10 @@ using MvcMovie.Models;
 using System.Linq;
 using System.Security.Cryptography;
 using Xunit;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace MvcMovieUnitTests
 {
@@ -11,6 +15,14 @@ namespace MvcMovieUnitTests
         private Helpers _helper = new Helpers();
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        [Fact]        
+        public void StartupTest()
+        {
+            var webHost = Microsoft.AspNetCore.WebHost.CreateDefaultBuilder().UseStartup<MvcMovie.Startup>().Build();
+            Assert.NotNull(webHost);
+            Assert.NotNull(webHost.Services.GetRequiredService<MvcMovieContext>());
+        }
 
         [Fact]
         public void DeleteMoviesTest()
@@ -26,14 +38,14 @@ namespace MvcMovieUnitTests
         {
             try
             {
-                _helper.GetTestMoviesFromJson();
                 foreach (Movie m in _helper.TestMovies)
                 {
                     _helper.AddMovie(m);
                 }
             }
-            catch
+            catch (Exception e)
             {
+                var test = e.Message;
                 // add logging code here
             }
             Assert.NotEmpty(_helper.AllMovies);
