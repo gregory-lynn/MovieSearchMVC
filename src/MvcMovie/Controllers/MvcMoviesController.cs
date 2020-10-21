@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,6 +19,13 @@ namespace MvcMovie.Controllers
             _context = context;
         }
 
+        private List<MvcMovie.Models.Entities.Movies> _AllMovies;
+        public List<MvcMovie.Models.Entities.Movies> AllMovies
+        {
+            get { return _AllMovies; }
+            set { _AllMovies = value; }
+        }
+
         // GET: Movies
         public async Task<IActionResult> Index(string movieGenre, string searchString)
         {
@@ -26,9 +34,13 @@ namespace MvcMovie.Controllers
                                             orderby m.Info.ReleaseDate
                                             select m.Title;
 
-            var movies = _context.Movies.Include(x => x.Info)
+
+            _AllMovies = _context.Movies.Include(x => x.Info)
                 .Include(x => x.Info.Directors)
-                .Include(x => x.Info.Genres).Include(x => x.Info.Actors);
+                .Include(x => x.Info.Genres).Include(x => x.Info.Actors).ToList();
+
+            var movies = from m in _AllMovies
+                         select m;
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -44,11 +56,6 @@ namespace MvcMovie.Controllers
             };
             
             return View(movieEntityVM);
-        }
-
-        private IIncludableQueryable<T, List<Models.Entities.Actors>> SharpListResponse<T>(IIncludableQueryable<T, List<Models.Entities.Actors>> movies)
-        {
-            throw new NotImplementedException();
         }
 
         // GET: Movies/Details/5
