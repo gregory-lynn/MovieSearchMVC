@@ -23,6 +23,10 @@ namespace MvcMovieUnitTests
         #region Private Properties
         private List<MvcMovie.Models.Entities.Movies> _AllMovies;
         private List<MvcMovie.Models.Entities.Movies> _TestMovies;
+        private List<MvcMovie.Models.Entities.Info> _infos;
+        private List<MvcMovie.Models.Entities.Actors> _actors;
+        private List<MvcMovie.Models.Entities.Directors> _directors;
+        private List<MvcMovie.Models.Entities.Genres> _genres;
         private MvcMovieContext _context;
         #endregion
         #region Public Properties
@@ -43,18 +47,18 @@ namespace MvcMovieUnitTests
             Startup();
             GetAllMovies();
             GetTestMoviesFromJson();
-            DeleteAllTestMovies();
+            //DeleteAllTestMovies();
         }
         #endregion
 
         // update properties with entity model
-        public void AddMovie(Movies movie)
+        public void AddMovie(MvcMovie.Models.Entities.Movies movie)
         {
             //List<MvcMovie.Models.Entities.Movies> tmpList = new List<MvcMovie.Models.Entities.Movies>();
             //tmpList.Add(movie);
             // AddMovies(tmpList);
             _context.Add(
-                new Movies
+                new MvcMovie.Models.Entities.Movies
                 {
                     // update properties with entity model
 
@@ -83,21 +87,24 @@ namespace MvcMovieUnitTests
                 _context.SaveChanges();
             }
         }
-        public void DeleteAllTestMovies()
-        {
-            foreach (MvcMovie.Models.Entities.Movies m in TestMovies)
-            {
-                var tmpMovie = (from tmp in AllMovies where tmp.Title.Equals(m.Title) select tmp).FirstOrDefault();
-                if (tmpMovie != null)
-                {
-                    _context.Movies.Remove(tmpMovie);
-                    _context.SaveChanges();
-                }
-            }
-        }
+        //public void DeleteAllTestMovies()
+        //{
+        //    foreach (MvcMovie.Models.Entities.Movies m in TestMovies)
+        //    {
+        //        var tmpMovie = (from tmp in AllMovies where tmp.Title.Equals(m.Title) select tmp).FirstOrDefault();
+        //        if (tmpMovie != null)
+        //        {
+        //            _context.Movies.Remove(tmpMovie);
+        //            _context.SaveChanges();
+        //        }
+        //    }
+        //}
         public void GetAllMovies()
         {
-            AllMovies = (from m in _context.Movies orderby m.Info.ReleaseDate select m).ToList();
+            //AllMovies = (from m in _context.Movies orderby m.Info.ReleaseDate select m).ToList();
+            AllMovies = _context.Movies.Include(x => x.Info)
+                .Include(x => x.Info.Directors)
+                .Include(x => x.Info.Genres).Include(x => x.Info.Actors).ToList();
         }
 
         public void GetTestMoviesFromJson()
