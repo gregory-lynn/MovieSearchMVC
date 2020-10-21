@@ -1,9 +1,8 @@
 [
     {
-        "Id": "",
         "Title": "Test 1",
         "ReleaseDate": "2020-10-20",
         "Genre": "Test Genre",
-        "Price": "19.99m"
+        "Price": "19.99"
     }
 ]

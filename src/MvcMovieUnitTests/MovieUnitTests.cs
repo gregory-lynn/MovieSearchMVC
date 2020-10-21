@@ -16,21 +16,22 @@ namespace MvcMovieUnitTests
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger
             (System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        [Fact]        
-        public void StartupTest()
-        {
-            var webHost = Microsoft.AspNetCore.WebHost.CreateDefaultBuilder().UseStartup<MvcMovie.Startup>().Build();
-            Assert.NotNull(webHost);
-            Assert.NotNull(webHost.Services.GetRequiredService<MvcMovieContext>());
-        }
-
         [Fact]
-        public void DeleteMoviesTest()
+        public void DeleteAllMoviesTest()
         {
-            _helper.DeleteAllMovies();
-            _helper.GetAllMovies();
+            try
+            {
+                _helper.DeleteAllMovies();
+                _helper.GetAllMovies();
 
-            Assert.Empty(_helper.AllMovies);
+                Assert.Empty(_helper.AllMovies);
+            }
+            catch (Exception e)
+            {
+                var test = e.Message;
+                // add logging code here
+            }
+
         }
 
         [Fact]
@@ -38,19 +39,17 @@ namespace MvcMovieUnitTests
         {
             try
             {
-                foreach (Movie m in _helper.TestMovies)
-                {
-                    _helper.AddMovie(m);
-                }
+                Assert.NotEmpty(_helper.AllMovies);
+                _helper.AddMovies(_helper.TestMovies);
+                Movie JsonMovie = (from m in _helper.TestMovies select m).FirstOrDefault();
+                Movie TestMovie = (from m in _helper.AllMovies where m.Title.Equals(JsonMovie.Title) select m).FirstOrDefault();
+                Assert.NotNull(TestMovie);
             }
             catch (Exception e)
             {
                 var test = e.Message;
                 // add logging code here
             }
-            Assert.NotEmpty(_helper.AllMovies);
-            Movie testmovie = (from m in _helper.TestMovies select m).FirstOrDefault();
-            Assert.Contains(testmovie, _helper.AllMovies);
         }
     }
 }

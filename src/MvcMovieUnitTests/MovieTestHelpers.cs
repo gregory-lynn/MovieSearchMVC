@@ -7,6 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MvcMovie;
@@ -42,18 +43,52 @@ namespace MvcMovieUnitTests
             Startup();
             GetAllMovies();
             GetTestMoviesFromJson();
+            DeleteAllTestMovies();
         }
         #endregion
 
         public void AddMovie(Movie movie)
         {
-            _context.Movie.Add(movie);
+            //List<Movie> tmpList = new List<Movie>();
+            //tmpList.Add(movie);
+            // AddMovies(tmpList);
+            _context.Add(
+                new Movie
+                {
+                    Title = movie.Title,
+                    ReleaseDate = movie.ReleaseDate,
+                    Genre = movie.Genre,
+                    Price = movie.Price
+                });
+            _context.SaveChanges();
+        }
+        public void AddMovies(List<Movie> movies)
+        {
+            //_context.Movie.AddRange(movies);
+            //_context.SaveChanges();
+            foreach (Movie m in movies)
+            {
+                AddMovie(m);
+            }
         }
         public void DeleteAllMovies()
         {
             foreach (Movie m in AllMovies)
             {
                 _context.Movie.Remove(m);
+                _context.SaveChanges();
+            }
+        }
+        public void DeleteAllTestMovies()
+        {
+            foreach (Movie m in TestMovies)
+            {
+                var tmpMovie = (from tmp in AllMovies where tmp.Title.Equals(m.Title) select tmp).FirstOrDefault();
+                if (tmpMovie != null)
+                {
+                    _context.Movie.Remove(tmpMovie);
+                    _context.SaveChanges();
+                }
             }
         }
         public void GetAllMovies()
@@ -83,10 +118,27 @@ namespace MvcMovieUnitTests
         }
         private void Startup()
         {
+            var args = new string[0];
             var webHost = WebHost.CreateDefaultBuilder().UseStartup<Startup>().Build();
             Assert.NotNull(webHost);
             Assert.NotNull(webHost.Services.GetRequiredService<MvcMovieContext>());
             _context = webHost.Services.GetService<MvcMovieContext>();
+            using (var scope = webHost.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<MvcMovieContext>();
+                context.Database.Migrate();
+                SeedData.Initialize(services);
+            }
+            try
+            {
+                webHost.Start();
+                _context.SaveChanges();
+            }
+            catch
+            {
+                // do nothing web host already started
+            }
         }
     }
     public class Startup : MvcMovie.Startup
