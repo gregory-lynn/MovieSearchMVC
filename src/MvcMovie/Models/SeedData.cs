@@ -20,38 +20,45 @@ namespace MvcMovie.Models
                 //{
                 //    return;   // DB has been seeded
                 //}
+                if (!context.Movie.Any())
+                {
+                    context.Movie.AddRange(
+                        new Movie
+                        {
+                            Title = "When Harry Met Sally",
+                            ReleaseDate = DateTime.Parse("1989-2-12"),
+                            Genre = "Romantic Comedy",
+                            Price = 7.99M
+                        },
 
-                context.Movie.AddRange(
-                    new Movie
+                        new Movie
+                        {
+                            Title = "Ghostbusters ",
+                            ReleaseDate = DateTime.Parse("1984-3-13"),
+                            Genre = "Comedy",
+                            Price = 8.99M
+                        },
+                        new Movie
+                        {
+                            Title = "Rio Bravo",
+                            ReleaseDate = DateTime.Parse("1959-4-15"),
+                            Genre = "Western",
+                            Price = 3.99M
+                        });
+
+                }
+
+                if (!context.Movies.Any())
+                {
+                    context.Movies.AddRange(
+                    new Entities.Movies
                     {
                         Title = "When Harry Met Sally",
-                        ReleaseDate = DateTime.Parse("1989-2-12"),
-                        Genre = "Romantic Comedy",
-                        Price = 7.99M
-                    },
-
-                    new Movie
-                    {
-                        Title = "Ghostbusters ",
-                        ReleaseDate = DateTime.Parse("1984-3-13"),
-                        Genre = "Comedy",
-                        Price = 8.99M
-                    },
-                    new Movie
-                    {
-                        Title = "Rio Bravo",
-                        ReleaseDate = DateTime.Parse("1959-4-15"),
-                        Genre = "Western",
-                        Price = 3.99M
+                        Year = "1989",
+                        Info = GetInfo()
                     });
-                context.Movies.AddRange(
-                new Entities.Movies
-                {
-                    Title = "When Harry Met Sally",
-                    Year = "1989",
-                    Info = GetInfo()
-                });
-                context.SaveChanges();
+                    context.SaveChanges();
+                }
             }
         }
         private static Info GetInfo()
@@ -61,7 +68,10 @@ namespace MvcMovie.Models
                 MovieId = 1,
                 Directors = GetDirectors(),
                 ReleaseDate = DateTime.Parse("2020-02-02"),
+                Rating = 7.0m,
                 Genres = GetGenres(),
+                ImageUrl = "",
+                Plot = "",
                 Rank = "2.0",
                 RunningTime = "9009",
                 Actors = GetActors()

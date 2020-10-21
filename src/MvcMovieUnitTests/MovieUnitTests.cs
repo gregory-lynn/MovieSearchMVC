@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using MvcMovie.Models.Entities;
 
 namespace MvcMovieUnitTests
 {
@@ -41,8 +42,8 @@ namespace MvcMovieUnitTests
             {
                 Assert.NotEmpty(_helper.AllMovies);
                 _helper.AddMovies(_helper.TestMovies);
-                Movie JsonMovie = (from m in _helper.TestMovies select m).FirstOrDefault();
-                Movie TestMovie = (from m in _helper.AllMovies where m.Title.Equals(JsonMovie.Title) select m).FirstOrDefault();
+                Movies JsonMovie = (from m in _helper.TestMovies select m).FirstOrDefault();
+                Movies TestMovie = (from m in _helper.AllMovies where m.Title.Equals(JsonMovie.Title) select m).FirstOrDefault();
                 Assert.NotNull(TestMovie);
             }
             catch (Exception e)

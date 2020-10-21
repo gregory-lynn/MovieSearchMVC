@@ -86,11 +86,20 @@ namespace MvcMovie.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("MovieId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Plot")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Rank")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Rating")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");

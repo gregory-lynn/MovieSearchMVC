@@ -15,6 +15,9 @@ namespace MvcMovie.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MovieId = table.Column<int>(nullable: false),
                     ReleaseDate = table.Column<DateTime>(nullable: false),
+                    Rating = table.Column<decimal>(nullable: false),
+                    ImageUrl = table.Column<string>(nullable: true),
+                    Plot = table.Column<string>(nullable: true),
                     Rank = table.Column<string>(nullable: true),
                     RunningTime = table.Column<string>(nullable: true)
                 },

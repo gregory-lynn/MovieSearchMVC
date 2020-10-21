@@ -21,17 +21,17 @@ namespace MvcMovieUnitTests
     class Helpers
     {
         #region Private Properties
-        private List<Movie> _AllMovies;
-        private List<Movie> _TestMovies;
+        private List<MvcMovie.Models.Entities.Movies> _AllMovies;
+        private List<MvcMovie.Models.Entities.Movies> _TestMovies;
         private MvcMovieContext _context;
         #endregion
         #region Public Properties
-        public List<Movie> AllMovies
+        public List<MvcMovie.Models.Entities.Movies> AllMovies
         {
             get { return _AllMovies; }
             set { _AllMovies = value; }
         }
-        public List<Movie> TestMovies
+        public List<MvcMovie.Models.Entities.Movies> TestMovies
         {
             get { return _TestMovies; }
             set { _TestMovies = value; }
@@ -47,53 +47,57 @@ namespace MvcMovieUnitTests
         }
         #endregion
 
-        public void AddMovie(Movie movie)
+        // update properties with entity model
+        public void AddMovie(Movies movie)
         {
-            //List<Movie> tmpList = new List<Movie>();
+            //List<MvcMovie.Models.Entities.Movies> tmpList = new List<MvcMovie.Models.Entities.Movies>();
             //tmpList.Add(movie);
             // AddMovies(tmpList);
             _context.Add(
-                new Movie
+                new Movies
                 {
-                    Title = movie.Title,
-                    ReleaseDate = movie.ReleaseDate,
-                    Genre = movie.Genre,
-                    Price = movie.Price
+                    // update properties with entity model
+
+                    //Title = movie.Title,
+                    //ReleaseDate = movie.ReleaseDate,
+                    //Genre = movie.Genre,
+                    //Price = movie.Price
                 });
             _context.SaveChanges();
         }
-        public void AddMovies(List<Movie> movies)
+        public void AddMovies(List<MvcMovie.Models.Entities.Movies> movies)
         {
             //_context.Movie.AddRange(movies);
             //_context.SaveChanges();
-            foreach (Movie m in movies)
+            foreach (MvcMovie.Models.Entities.Movies m in movies)
             {
+                // update properties with entity model
                 AddMovie(m);
             }
         }
         public void DeleteAllMovies()
         {
-            foreach (Movie m in AllMovies)
+            foreach (MvcMovie.Models.Entities.Movies m in AllMovies)
             {
-                _context.Movie.Remove(m);
+                _context.Movies.Remove(m);
                 _context.SaveChanges();
             }
         }
         public void DeleteAllTestMovies()
         {
-            foreach (Movie m in TestMovies)
+            foreach (MvcMovie.Models.Entities.Movies m in TestMovies)
             {
                 var tmpMovie = (from tmp in AllMovies where tmp.Title.Equals(m.Title) select tmp).FirstOrDefault();
                 if (tmpMovie != null)
                 {
-                    _context.Movie.Remove(tmpMovie);
+                    _context.Movies.Remove(tmpMovie);
                     _context.SaveChanges();
                 }
             }
         }
         public void GetAllMovies()
         {
-            AllMovies = (from m in _context.Movie orderby m.ReleaseDate select m).ToList();
+            AllMovies = (from m in _context.Movies orderby m.Info.ReleaseDate select m).ToList();
         }
 
         public void GetTestMoviesFromJson()
@@ -102,7 +106,7 @@ namespace MvcMovieUnitTests
             {
                 using StreamReader file = (StreamReader)GetInputFile("TestMovies.json");
                 JsonSerializer serializer = new JsonSerializer();
-                TestMovies = (List<Movie>)serializer.Deserialize(file, typeof(List<Movie>));
+                TestMovies = (List<MvcMovie.Models.Entities.Movies>)serializer.Deserialize(file, typeof(List<MvcMovie.Models.Entities.Movies>));
             }
             catch (Exception e)
             {
