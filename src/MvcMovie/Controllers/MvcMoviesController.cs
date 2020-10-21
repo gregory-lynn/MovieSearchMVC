@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MvcMovie.Models;
-using MvcMovie.Models.Entities;
 
 namespace MvcMovie.Controllers
 {
@@ -27,17 +26,17 @@ namespace MvcMovie.Controllers
                                             orderby m.Info.ReleaseDate
                                             select m.Title;
 
-            IQueryable<Movies> movies = (IQueryable<Movies>)_context.Movies.Include(x => x.Info)
+            var movies = _context.Movies.Include(x => x.Info)
                 .Include(x => x.Info.Directors)
-                .Include(x => x.Info.Genres).Include(x => x.Info.Actors).ToList();
+                .Include(x => x.Info.Genres).Include(x => x.Info.Actors);
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                movies = (IQueryable<Movies>)movies.Where(s => s.Title.Contains(searchString));
+                movies = movies.Where(s => s.Title.Contains(searchString));
             }
 
             // change default sort order based on requirements
-            movies = (IQueryable<Movies>)movies.OrderByDescending(m => m.Info.ReleaseDate);
+            movies = movies.OrderByDescending(m => m.Info.ReleaseDate);
 
             var movieEntityVM = new MoviesEntityViewModel
             {
@@ -45,6 +44,11 @@ namespace MvcMovie.Controllers
             };
             
             return View(movieEntityVM);
+        }
+
+        private IIncludableQueryable<T, List<Models.Entities.Actors>> SharpListResponse<T>(IIncludableQueryable<T, List<Models.Entities.Actors>> movies)
+        {
+            throw new NotImplementedException();
         }
 
         // GET: Movies/Details/5
