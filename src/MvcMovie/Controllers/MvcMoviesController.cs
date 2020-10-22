@@ -27,7 +27,7 @@ namespace MvcMovie.Controllers
         }
 
         // GET: Movies
-        public async Task<IActionResult> Index(string movieGenre, string searchString)
+        public async Task<IActionResult> Index(string searchString)
         {
             // Use LINQ to get list of titles.
             IQueryable<string> genreQuery = from m in _context.Movies
@@ -52,7 +52,8 @@ namespace MvcMovie.Controllers
 
             var movieEntityVM = new MoviesEntityViewModel
             {
-                Movies = await movies.ToListAsync()
+               //Movies = await movies.AsQueryable().ToListAsync()
+               Movies = await Task.FromResult(movies.ToList())
             };
             
             return View(movieEntityVM);
@@ -65,7 +66,12 @@ namespace MvcMovie.Controllers
             {
                 return NotFound();
             }
+            _AllMovies = _context.Movies.Include(x => x.Info)
+                .Include(x => x.Info.Directors)
+                .Include(x => x.Info.Genres).Include(x => x.Info.Actors).ToList();
 
+            //var movie = from m in AllMovies where m.Id.Equals(id)
+            //             select m;
             var movie = await _context.Movies
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movie == null)

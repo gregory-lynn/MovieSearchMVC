@@ -5,7 +5,7 @@ namespace MvcMovie.Models
 {
     public class MoviesEntityViewModel
     {
-        public List<Entities.Movies> Movies;
+        public List<Entities.Movies> Movies { get; set;}
         public string SearchString { get; set; }
     }
 }
